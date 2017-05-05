@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+     <link href="lib/ol.css" rel="stylesheet" />
+    <title></title>
+</head>
+<body>
+      <div id="map" style="width: 100%; height: 100%">
+    </div>
+</body>
+    <script src="lib/ol-debug.js"></script>
+<script>
+    var projection = ol.proj.get('EPSG:3857');
+    var resolutions = [];
+    for (var i = 0; i < 19; i++) {
+        resolutions[i] = Math.pow(2, 18 - i);
+    }
+    //定义瓦片图像的网格
+    var tilegrid = new ol.tilegrid.TileGrid({
+        origin: [0, 0],
+        resolutions:resolutions
+    });
+    //定义瓦片网络图像数据源
+    var baidu_source = new ol.source.TileImage({
+        projection: projection,
+        tileGrid: tilegrid,
+        //获取瓦片URL给定瓦片坐标和投影。
+        tileUrlFunction: function (tileCoord, pixelRatio, proj) {
+            //tilecoord代表瓷砖网格中瓦片位置的三个数字的数组。顺序是z，x和y。 z是缩放级别
+            if (!tileCoord)
+            {
+                return "";
+            }
+
+            var z = tileCoord[0]; 
+            var x = tileCoord[1];
+            var y = tileCoord[2];
+
+            if (x < 0)
+            {
+                x = "M" + (-x);
+            }
+            if (y < 0)
+            {
+                y = "M"+(-y);
+            }
+            return "http://online3.map.bdimg.com/onlinelabel/?qt=tile&x=" + x + "&y=" + y + "&z=" + z + "&styles=pl&udt=20170504&scaler=1&p=1";;
+        }
+    });
+    //定义百度图层
+    var baidu_layer = new ol.layer.Tile({
+        source:baidu_source
+    });
+    var map = new ol.Map({
+        target: 'map',
+        layers: [
+           baidu_layer
+        ],
+        //视图
+        view: new ol.View({
+            center: [12959773, 4853101], //使用ol的坐标， 在百度地图上有地图偏移，根据api 可以转成百度坐标系
+            zoom: 12 //缩放级别
+        }),
+        //添加控件
+        controls: ol.control.defaults().extend([
+            new ol.control.OverviewMap() //鹰眼图
+           // new ol.control.Rotate()
+        ])
+    });
+</script>
+</html>

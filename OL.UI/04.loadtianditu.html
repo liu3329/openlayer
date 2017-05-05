@@ -1,0 +1,62 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link href="lib/ol.css" rel="stylesheet" />
+    <title></title>
+</head>
+<body>
+     <div id="map" style="width: 100%; height: 100%">
+    </div>
+</body>
+    <script src="lib/ol-debug.js"></script>
+    <script>
+        var map = new ol.Map({
+            target: 'map',
+            layers: [
+                //新建瓦片服务
+                new ol.layer.Tile({
+                    source: new ol.source.OSM() //添加osm
+                }),
+
+            ],
+            //视图
+            view: new ol.View({
+                center: [0, 0],
+                zoom: 1 //缩放级别
+            }),
+            //添加控件
+            controls: ol.control.defaults().extend([
+                new ol.control.OverviewMap() //鹰眼图
+               // new ol.control.Rotate()
+            ])
+        });
+        //定义天地图路网图层
+        var tianditu_road_layer = new ol.layer.Tile({
+            title:"天地图路网",
+            source: new ol.source.XYZ({
+                url: "http://t4.tianditu.com/DataServer?T=vec_w&x={x}&y={y}&l={z}"
+            })
+        });
+      
+
+        //天地图注记图层
+        var tianditu_annotation_layer = new ol.layer.Tile({
+            title: "天地图注记",
+            source: new ol.source.XYZ({
+                url: "http://t4.tianditu.com/DataServer?T=cva_w&x={x}&y={y}&l={z}"
+            })
+        });
+       
+        //天地图卫星影像图层
+        var tianditu_satellite_layer = new ol.layer.Tile({
+            title: "天地图卫星影像",
+            source: new ol.source.XYZ({
+                url: 'http://t3.tianditu.com/DataServer?T=img_w&x={x}&y={y}&l={z}'
+            })
+        });
+        map.addLayer(tianditu_satellite_layer);
+        map.addLayer(tianditu_road_layer);
+        map.addLayer(tianditu_annotation_layer);
+    </script>
+</html>
