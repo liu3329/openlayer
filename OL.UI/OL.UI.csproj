@@ -66,6 +66,7 @@
     <Content Include="07.loadGeoserMap.html" />
     <Content Include="08.loadWFS.html" />
     <Content Include="css\popup.css" />
+    <Content Include="lib\highlightFeature.js" />
     <Content Include="lib\jquery.min.js" />
     <Content Include="lib\map_utils.js" />
     <Content Include="lib\ol-debug.js" />
