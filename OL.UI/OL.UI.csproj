@@ -63,15 +63,25 @@
     <Content Include="04.loadtianditu.html" />
     <Content Include="05.popup.html" />
     <Content Include="06.loadVector.html" />
+    <Content Include="07.loadGeoserMap.html" />
+    <Content Include="08.loadWFS.html" />
     <Content Include="css\popup.css" />
     <Content Include="lib\jquery.min.js" />
     <Content Include="lib\map_utils.js" />
     <Content Include="lib\ol-debug.js" />
     <Content Include="lib\ol.css" />
     <Content Include="lib\ol.js" />
+    <Content Include="loadWFSMAP.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="loadWFSMAP.aspx.cs">
+      <DependentUpon>loadWFSMAP.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="loadWFSMAP.aspx.designer.cs">
+      <DependentUpon>loadWFSMAP.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,98 @@
+﻿<html>
+<head>
+    <title>加载liubuliu服务器的济南铁路网</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="lib/ol.css" rel="stylesheet" />
+</head>
+<body>
+    <div id="map" class="map"></div>
+     <div id="info">&nbsp;</div>
+       <!--定义弹窗-->
+    <div id="popup_container" class="ol-popup">
+        <a href="#" id="popup_closer" class="ol-popup-closer"></a>
+        <div id="popup_content"></div>
+    </div>
+</body>
+<script src="lib/ol-debug.js"></script>
+<script>
+    var container = document.getElementById('popup_container');
+    var content = document.getElementById('popup_content');
+    var closer = document.getElementById('popup_closer');
+    var wmsSource = new ol.source.ImageWMS({
+        url: 'http://liubuliu.cn:8080/geoserver/postgres/wms',
+        params: {
+            'LAYERS': 'postgres:jinan_dijishi',
+            'VERSION': '1.1.0',
+            'FORMAT': 'image/png',
+        },
+        ratio: 1,
+        serverType: 'geoserver'
+    });
+    var wmsLayer = new ol.layer.Image({
+        extent: [116.210525512695, 36.0217437744141, 117.7490234375, 37.5458106994629],
+        source: wmsSource
+    });
+    var layers = [
+        //新建瓦片服务
+       new ol.layer.Tile({
+           source: new ol.source.OSM()
+       }),
+        wmsLayer
+    ];
+    var projection = new ol.proj.Projection({
+        code: 'EPSG:4326',//投影编码
+        units: 'degrees',
+        axisOrientation: 'neu'
+    });
+    var view = new ol.View({
+        center: [116.952323913574, 36.6441802978516],
+        zoom: 9,
+        projection: projection
+    });
+    var map = new ol.Map({
+        layers: layers,
+        target: 'map',
+        view: view
+    });
+    //创建一个以弹出窗口形式的覆盖物
+    var overlay = new ol.Overlay({
+        element: container,  //覆盖物的元素
+        //autoPan: false,
+        //positioning: 'center-right',
+        //autoPanAnimtaion: {
+        //    duration:250
+        //}
+    });
+    //关闭按钮点击时
+    closer.onclick = function () {
+        overlay.setPosition(undefined); //让覆盖物失去
+        //close.blur(); //取消焦点
+        return false;
+    };
+
+
+    map.on('singleclick', function (evt) {
+        //document.getElementById('info').innerHTML = '';
+        var coordinate = evt.coordinate;  //返回浏览器事件的视图投影中的坐标
+        var pixel = map.getEventPixel(evt.originalEvent); //返回浏览器事件相对于视口的地图像素位置
+        var viewResolution = /** @type {number} */ (view.getResolution());
+        var url = wmsSource.getGetFeatureInfoUrl(
+            evt.coordinate, viewResolution, 'EPSG:4326',
+            { 'INFO_FORMAT': 'text/html' });
+        if (url) {
+            document.getElementById('info').innerHTML =
+               '<iframe seamless src="' + url + '"></iframe>';
+            //alert(url);
+            
+            //content.innerHTML = '<P><iframe seamless src="' + url + '"></iframe></P>';
+            //overlay.setPosition(coordinate); //设置overlay的位置
+        }
+    });
+
+
+
+</script>
+</html>
+
+
+
