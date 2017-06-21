@@ -17,7 +17,7 @@
 <script src="lib/jquery.min.js"></script>
 <script src="lib/ol.js"></script>
 <script>
-   
+
     //从后台获取geojson
     function getFeature() {
         var result;
@@ -33,6 +33,21 @@
         });
         return result;
     }
+    var wmsSource = new ol.source.ImageWMS({
+        url: 'http://liubuliu.cn:8080/geoserver/postgres/wms',
+        params: {
+            'LAYERS': 'postgres:polyline',
+            'VERSION': '1.1.0',
+            'FORMAT': 'image/png',
+        },
+        ratio: 1,
+        serverType: 'geoserver'
+    });
+    var wmsLayer = new ol.layer.Image({
+        extent: [116.952323913574, 36.6441802978516, 117.076675415039, 36.7242965698242],
+        source: wmsSource
+    });
+
     //矢量数据源
     var vectorSource = new ol.source.Vector({
         features: (new ol.format.GeoJSON()).readFeatures(getFeature())
@@ -92,8 +107,8 @@
         layers: [
           new ol.layer.Tile({
               source: new ol.source.OSM()
-          }),
-          vectorLayer
+          })
+         
         ],
         overlays: [overlay],
         target: 'map',
@@ -103,19 +118,40 @@
             projection: 'EPSG:4326',
         })
     });
-    //地图的单击事件时，弹出popup
-    map.on('singleclick', function (evt) {
-        var coordinate = evt.coordinate;  //返回浏览器事件的视图投影中的坐标
-        var pixel = map.getEventPixel(evt.originalEvent); //返回浏览器事件相对于视口的地图像素位置
-        var feature = map.forEachFeatureAtPixel(pixel, function (feature, layer) { //检测与地图像素相交的feature，如果找到返回与之匹配的feature
-            return feature
+  
+    map.addLayer(vectorLayer);
+    map.addLayer(wmsLayer);
+    ////地图的单击事件时，弹出popup
+    //map.on('singleclick', function (evt) {
+    //    var coordinate = evt.coordinate;  //返回浏览器事件的视图投影中的坐标
+    //    var pixel = map.getEventPixel(evt.originalEvent); //返回浏览器事件相对于视口的地图像素位置
+    //    var feature = map.forEachFeatureAtPixel(pixel, function (feature, layer) { //检测与地图像素相交的feature，如果找到返回与之匹配的feature
+    //        return feature
+    //    });
+    //    var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(coordinate, 'EPSG:4326', 'EPSG:4326'));
+    //    //content.innerHTML = '<P>这里是' + feature.get('name') + '</P>';
+    //    content.innerHTML = '<p>' + feature.get('name') + '</p>';
+    //    overlay.setPosition(coordinate); //设置overlay的位置
+    //    //alert(coordinate);
+    //});
+    map.on('click', mapClick);
+    function mapClick(evt) {
+        var coor = evt.coordinate;
+        coor = coor.join(',');
+        $.ajax({
+            url: 'command_postgresql.aspx',
+            type: 'Post',
+            dataType: 'text',
+            data: {
+                point: coor
+            },
+            success: function (res) {
+                var coordinate = evt.coordinate;  //返回浏览器事件的视图投影中的坐标
+                content.innerHTML = '<p>' +res + '</p>';
+                overlay.setPosition(coordinate); //设置overlay的位置
+            }
         });
-        var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(coordinate, 'EPSG:4326', 'EPSG:4326'));
-        //content.innerHTML = '<P>这里是' + feature.get('name') + '</P>';
-        content.innerHTML = '<p>'+feature.get('name')+'</p>';
-        overlay.setPosition(coordinate); //设置overlay的位置
-        //alert(coordinate);
-    });
+    }
 </script>
-      <script src="lib/highlightFeature.js"></script>
+<script src="lib/highlightFeature.js"></script>
 </html>

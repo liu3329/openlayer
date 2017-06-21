@@ -39,6 +39,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Npgsql, Version=2.0.12.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\NPGsql必要dll\Npgsql.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -65,6 +69,7 @@
     <Content Include="06.loadVector.html" />
     <Content Include="07.loadGeoserMap.html" />
     <Content Include="08.loadWFS.html" />
+    <Content Include="command_postgresql.aspx" />
     <Content Include="css\popup.css" />
     <Content Include="lib\highlightFeature.js" />
     <Content Include="lib\jquery.min.js" />
@@ -76,6 +81,13 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="command_postgresql.aspx.cs">
+      <DependentUpon>command_postgresql.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="command_postgresql.aspx.designer.cs">
+      <DependentUpon>command_postgresql.aspx</DependentUpon>
+    </Compile>
     <Compile Include="loadWFSMAP.aspx.cs">
       <DependentUpon>loadWFSMAP.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
